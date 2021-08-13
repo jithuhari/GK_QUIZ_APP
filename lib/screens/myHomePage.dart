@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:general_knowledge_quiz/screens/answer.dart';
+import 'package:general_knowledge_quiz/controllers/question_controller.dart';
 import 'package:general_knowledge_quiz/widgets/progressBar.dart';
+import 'package:general_knowledge_quiz/widgets/questionCard.dart';
+import 'package:get/get.dart';
 
 class QuizMainPage extends StatefulWidget {
   const QuizMainPage({Key? key}) : super(key: key);
@@ -16,6 +18,9 @@ class _QuizMainPageState extends State<QuizMainPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    QuestionController _questionController = Get.put(QuestionController());
+
     return Scaffold(
       backgroundColor: Colors.tealAccent.shade700,
       body: Column(
@@ -34,8 +39,8 @@ class _QuizMainPageState extends State<QuizMainPage> {
                     ),
                   ),
                   Stack(
-                    children: 
-                      [Container(
+                    children: [
+                      Container(
                         decoration: BoxDecoration(
                             color: Colors.greenAccent,
                             borderRadius: BorderRadius.only(
@@ -45,10 +50,11 @@ class _QuizMainPageState extends State<QuizMainPage> {
                       ),
                       Center(
                         child: Column(
-                          children: 
-                            [
-                              SizedBox(height: 10,),
-                              ProgressBar(),
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            ProgressBar(),
                           ],
                         ),
                       ),
@@ -73,8 +79,10 @@ class _QuizMainPageState extends State<QuizMainPage> {
                             borderRadius: BorderRadius.circular(10)),
                         height: MediaQuery.of(context).size.height * .15,
                         width: MediaQuery.of(context).size.width * .15,
-                        child: Center(child: Text('0/9',
-                        style: Theme.of(context).textTheme.headline3,
+                        child: Center(
+                            child: Text(
+                          '0/9',
+                          style: Theme.of(context).textTheme.headline3,
                         )),
                       ),
                     ],
@@ -86,124 +94,16 @@ class _QuizMainPageState extends State<QuizMainPage> {
           SizedBox(
             height: 10,
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.tealAccent.shade700,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.teal, width: 6)),
-              height: MediaQuery.of(context).size.height * .4,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                    child: Text(
-                  '${_questions[questionIndex]['question']}',
-                  style: Theme.of(context).textTheme.headline3,
-                )),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(30, 0, 30, 10),
-            child: Container(
-              height: MediaQuery.of(context).size.height * .15,
-              decoration: BoxDecoration(
-                color: Colors.tealAccent.shade700,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.teal, width: 1),
-              ),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 2,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * .9,
-                    child: Row(
-                      children: [
-                        ...(_questions[questionIndex]['answers']
-                                as List<Map<String, Object>>)
-                            .map(
-                          (answer) => Expanded(
-                            child: Answers(
-                              answerText: '${answer['answerText']}',
-                              answerColor: answerWasSelected
-                                  ? answer['score'] == true
-                                      ? Colors.green
-                                      : Colors.red
-                                  : Colors.yellowAccent,
-                                  answerTap: (){},
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 2,
-                  ),
-                ],
-              ),
-            ),
-          ),
+          
+          Expanded(child: 
+          PageView.builder(
+            itemCount: _questionController.questions.length,
+            itemBuilder: (context , index)=>
+            QuestionCard(question:_questionController.questions[index] ,),)),
+          
+          // AnswerCard(),
         ],
       ),
     );
   }
 }
-
-
-final _questions = const [
-  {
-    'question':
-        'Find the time if in an analog clock , the hour hand is at 9 and the minute hand makes an angle of 90 degree with the hour hand ?',
-    'answers': [
-      {'answerText': '9.00', 'score': true},
-      {'answerText': '9.30', 'score': false},
-    ],
-  },
-  {
-    'question':
-        'In which month does the German festival of Oktoberfest mostly take place?',
-    'answers': [
-      {'answerText': 'October', 'score': false},
-      {'answerText': 'September', 'score': true},
-    ],
-  },
-  {
-    'question': 'Who composed the music for Sonic the Hedgehog 3?',
-    'answers': [
-      {'answerText': 'Timbaland', 'score': false},
-      {'answerText': 'Michael Jackson', 'score': true},
-    ],
-  },
-  {
-    'question': 'In Georgia (the state), it’s illegal to eat what with a fork?',
-    'answers': [
-      {'answerText': 'Fried chicken', 'score': true},
-      {'answerText': 'Pizza', 'score': false},
-    ],
-  },
-  {
-    'question': 'In which country are Panama hats made?',
-    'answers': [
-      {'answerText': 'Ecuador', 'score': true},
-      {'answerText': 'Panama (duh)', 'score': false},
-    ],
-  },
-  {
-    'question': 'From which country do French fries originate?',
-    'answers': [
-      {'answerText': 'Belgium', 'score': true},
-      {'answerText': 'France (duh)', 'score': false},
-    ],
-  },
-  {
-    'question': 'Which sea creature has three hearts?',
-    'answers': [
-      {'answerText': 'Killer Whales', 'score': false},
-      {'answerText': 'The Octopus', 'score': true},
-    ],
-  },
-];

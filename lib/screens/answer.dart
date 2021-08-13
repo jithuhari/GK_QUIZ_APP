@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
-
+import 'package:general_knowledge_quiz/controllers/question_controller.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 class Answers extends StatelessWidget {
-  final String answerText;
-  final Color answerColor;
-  final Function answerTap;
-  Answers({
-    required this.answerText, 
-    required this.answerColor , 
-    required this.answerTap});
+ 
+  const Answers({
+    Key? key, 
+    required this.text, 
+    required this.index, 
+    required this.press,
+  }):super(key: key);
 
+  final String text;
+  final int index;
+  final VoidCallback press;
   //const Answers({ Key? key }) : super(key: key);
 
   @override
@@ -45,21 +49,45 @@ class Answers extends StatelessWidget {
       padding: const EdgeInsets.all(4.0),
       child: GestureDetector(
         onTap: (){
-          answerTap;
+          
         },
-        child: Container(
-          padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 5.5, 0,
-              MediaQuery.of(context).size.width / 5.5, 0),
-          decoration: BoxDecoration(
-            color: answerColor,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: Text(
-              '$answerText',
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
+        child: GetBuilder<QuestionController>(
+          init:QuestionController() ,
+          builder: (qnController) {
+
+            Color getTheRightColor(){
+              if (qnController.isAnswered){
+
+                if (index == qnController.correctAns) {
+                  return Colors.green;
+                } else if(index==qnController.selectedAns &&
+                    qnController.selectedAns != qnController.correctAns) 
+                {
+                    return Colors.red;
+                }
+                
+              }
+              return Colors.yellow;
+            }
+
+            return InkWell(
+              onTap: press,
+              child: Container(
+                padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 6, 0,
+                    MediaQuery.of(context).size.width / 6, 0),
+                decoration: BoxDecoration(
+                  color: getTheRightColor(),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Text(
+                    '$text',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ),
+            );
+          }
         ),
       ),
     );

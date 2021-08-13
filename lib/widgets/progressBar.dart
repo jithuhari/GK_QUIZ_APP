@@ -10,45 +10,42 @@ class ProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-    height: MediaQuery.of(context).size.height*.05,
-    width: MediaQuery.of(context).size.width*.5,
-    decoration: BoxDecoration(
-      color: Colors.tealAccent.shade700,
-      borderRadius: BorderRadius.circular(10)
-    ),
-    child: GetBuilder<QuestionController>(
-      init: QuestionController(),
-      builder: (controller) {
-        return Stack(
-          children: [
-            //Layout builder provide us the available space for the container
-            //constraints.maxWidh needed for our animation
-            LayoutBuilder
-            (builder: (context , constraints)=>Container(
-              width: constraints.maxWidth * controller.animation!.value,
-              decoration: BoxDecoration(
-                color: Colors.lightGreenAccent.shade400,
-                borderRadius: BorderRadius.circular(10)
-              ),
-            ),
-            ),
-            Positioned.fill(
-              child:Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text('${(controller.animation!.value*30).round()} Sec',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16
+      height: MediaQuery.of(context).size.height * .05,
+      width: MediaQuery.of(context).size.width * .5,
+      decoration: BoxDecoration(
+          color: Colors.tealAccent.shade700,
+          borderRadius: BorderRadius.circular(10)),
+      child: GetBuilder<QuestionController>(
+          init: QuestionController(),
+          builder: (controller) {
+            return Stack(
+              children: [
+                //Layout builder provide us the available space for the container
+                //constraints.maxWidh needed for our animation
+                LayoutBuilder(
+                  builder: (context, constraints) => Container(
+                    width: constraints.maxWidth * controller.animation!.value,
+                    decoration: BoxDecoration(
+                        color: Colors.lightGreenAccent.shade400,
+                        borderRadius: BorderRadius.circular(10)),
                   ),
-                  )
-                ],
-              )
-              )
-        ],);
-      }
-    ),
-                            );
+                ),
+                Positioned.fill(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${(controller.animation!.value * 30).round()} Sec',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
+                    )
+                  ],
+                ))
+              ],
+            );
+          }),
+    );
   }
 }
