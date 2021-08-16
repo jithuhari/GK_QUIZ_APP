@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:general_knowledge_quiz/controllers/question_controller.dart';
 import 'package:general_knowledge_quiz/widgets/progressBar.dart';
 import 'package:general_knowledge_quiz/widgets/questionCard.dart';
@@ -20,6 +21,9 @@ class _QuizMainPageState extends State<QuizMainPage> {
   Widget build(BuildContext context) {
 
     QuestionController _questionController = Get.put(QuestionController());
+
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
 
     return Scaffold(
       backgroundColor: Colors.tealAccent.shade700,
@@ -80,10 +84,13 @@ class _QuizMainPageState extends State<QuizMainPage> {
                         height: MediaQuery.of(context).size.height * .15,
                         width: MediaQuery.of(context).size.width * .15,
                         child: Center(
-                            child: Text(
-                          '0/9',
+                            child: Obx(()=>
+                            Text(
+                          '${_questionController.questionNumber.value}/${_questionController.questions.length}',
                           style: Theme.of(context).textTheme.headline3,
-                        )),
+                        )
+                            )
+                        ),
                       ),
                     ],
                   ),
@@ -97,6 +104,10 @@ class _QuizMainPageState extends State<QuizMainPage> {
           
           Expanded(child: 
           PageView.builder(
+            //Block Scroll to next page
+            physics: NeverScrollableScrollPhysics(),
+            controller: _questionController.pageController,
+            onPageChanged: _questionController.updateTheQnNum,
             itemCount: _questionController.questions.length,
             itemBuilder: (context , index)=>
             QuestionCard(question:_questionController.questions[index] ,),)),

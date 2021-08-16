@@ -1,5 +1,7 @@
-import 'package:flutter/animation.dart';
+//import 'package:flutter/animation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:general_knowledge_quiz/model/questionModel.dart';
+import 'package:general_knowledge_quiz/screens/Score/scorePage.dart';
 import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 
@@ -11,6 +13,9 @@ class QuestionController extends GetxController
 
 
   Animation? get animation =>this._animation;
+
+  PageController? _pageController;
+  PageController? get pageController => this._pageController;
 
   List<Question> _questions = 
 
@@ -44,7 +49,7 @@ class QuestionController extends GetxController
   void onInit() {
     _animationController = 
       AnimationController(
-        duration: Duration(seconds: 30),
+        duration: Duration(seconds: 15),
         vsync: this);
 
          _animation = Tween<double>(begin: 0, end: 1).animate(_animationController!)
@@ -54,18 +59,21 @@ class QuestionController extends GetxController
       });
 
     // start our animation
+    //when 30sec completed .go to next question
+    _animationController!.forward().whenComplete(nextQuestion);
 
-    _animationController!.forward();
+    _pageController = PageController();
+
     super.onInit();
   }
 
   // // called just before the Controller is deleted from memory
-  // @override
-  // void onClose() {
-  //   super.onClose();
-  //   _animationController.dispose();
-  //   _pageController.dispose();
-  // }
+  @override
+  void onClose() {
+    super.onClose();
+    _animationController!.dispose();
+    _pageController!.dispose();
+  }
 
   void checkAns(Question question, int selectedIndex) {
     // because once user press any option then it will run
@@ -79,31 +87,31 @@ class QuestionController extends GetxController
     _animationController!.stop();
     update();
 
-    // Once user select an ans after 3s it will go to the next qn
-    // Future.delayed(Duration(seconds: 3), () {
-    //   nextQuestion();
-    // });
+    //Once user select an ans after 3s it will go to the next qn
+    Future.delayed(Duration(seconds: 1), () {
+      nextQuestion();
+    });
   }
 
-  // void nextQuestion() {
-  //   if (_questionNumber.value != _questions.length) {
-  //     _isAnswered = false;
-  //     _pageController.nextPage(
-  //         duration: Duration(milliseconds: 250), curve: Curves.ease);
+  void nextQuestion() {
+    if (_questionNumber.value != _questions.length) {
+      _isAnswered = false;
+      _pageController!.nextPage(
+          duration: Duration(milliseconds: 250), curve: Curves.ease);
 
-  //     // Reset the counter
-  //     _animationController.reset();
+      // Reset the counter
+      _animationController!.reset();
 
-  //     // Then start it again
-  //     // Once timer is finish go to the next qn
-  //     _animationController.forward().whenComplete(nextQuestion);
-  //   } else {
-  //     // Get package provide us simple way to naviigate another page
-  //     Get.to(ScoreScreen());
-  //   }
-  // }
+      // Then start it again
+      // Once timer is finish go to the next qn
+      _animationController!.forward().whenComplete(nextQuestion);
+    } else {
+      //Get package provide us simple way to naviigate another page
+      Get.to(()=>ScorePage());
+    }
+  }
 
-  // void updateTheQnNum(int index) {
-  //   _questionNumber.value = index + 1;
-  // }
+  void updateTheQnNum(int index) {
+    _questionNumber.value = index +1;
+  }
 }
